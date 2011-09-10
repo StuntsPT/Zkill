@@ -4,6 +4,8 @@ import pygame, sys, os
 from pygame.locals import *
 from pygame.compat import geterror
 
+#Title goes here
+
 size = (800, 600)
 game_dir = "/home/diogo/Dropbox/Share_Francisco/Zkill/"
 player_speed = [200,200]
