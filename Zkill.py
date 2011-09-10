@@ -1,6 +1,6 @@
 #!/usr/bin/python2
 
-import pygame, sys, os
+import pygame, sys, os, math
 from pygame.locals import *
 from pygame.compat import geterror
 
@@ -22,6 +22,10 @@ def load_image(name, colorkey=None):
             colorkey = image.get_at((0,0))
         image.set_colorkey(colorkey, RLEACCEL)
     return image, image.get_rect()
+
+def coord_to_angle(player_coord, crosshair_coord):
+    #This function will get the player rotation from the aim position.
+    #First we subtract the player coords from the crosshair coords, to simulate a 0,0 axis
 
 def main():
     pygame.init()
