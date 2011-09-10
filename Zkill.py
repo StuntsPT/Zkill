@@ -4,10 +4,8 @@ import pygame, sys, os
 from pygame.locals import *
 from pygame.compat import geterror
 
-#Title goes here
-
 size = (800, 600)
-game_dir = "/home/diogo/Dropbox/Share_Francisco/Zkill/"
+game_dir = "./"
 player_speed = [200,200]
 screen = pygame.display.set_mode(size)
 
@@ -29,7 +27,7 @@ def main():
     pygame.init()
     pygame.mouse.set_visible(0) # Sets mouse cursor invisible
 
-    background= pygame.image.load("Building01.png").convert()
+    background= pygame.image.load("images/Building01.png").convert()
     background = pygame.transform.scale(background,size)
     screen.blit(background, (0,0))
     clock = pygame.time.Clock()
@@ -70,7 +68,7 @@ def main():
 class Crosshair(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self) # Calls sprite initializer
-        self.image, self.rect = load_image("Aim.png",-1)
+        self.image, self.rect = load_image("images/Aim.png",-1)
     def update(self):
         # Move the crosshair based on mouse position
         pos = pygame.mouse.get_pos()
@@ -81,7 +79,7 @@ class Player(pygame.sprite.Sprite):
     speed = 3
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image("Player.png",-1)
+        self.image, self.rect = load_image("images/Player.png",-1)
     def move(self,h_direction,v_direction):
         self.rect.move_ip(h_direction*self.speed,0)
         self.rect.move_ip(0, -v_direction*self.speed)
