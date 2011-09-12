@@ -23,7 +23,7 @@ def load_image(name, colorkey=None):
         image.set_colorkey(colorkey, RLEACCEL)
     return image, image.get_rect()
 
-def coord_to_angle(player_coord, crosshair_coord):
+#def coord_to_angle(player_coord, crosshair_coord):
     #This function will get the player rotation from the aim position.
     #First we subtract the player coords from the crosshair coords, to simulate a 0,0 axis
     #Let's get physical!
