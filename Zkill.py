@@ -1,12 +1,12 @@
 #!/usr/bin/python2
 
-import pygame, sys, os, math
+import pygame, sys, os, math, operator
 from pygame.locals import *
 from pygame.compat import geterror
 
 size = (800, 600)
 game_dir = "./"
-player_speed = [200,200]
+#player_speed = [200,200]
 screen = pygame.display.set_mode(size)
 
 def load_image(name, colorkey=None):
@@ -25,7 +25,16 @@ def load_image(name, colorkey=None):
 
 def coord_to_angle(player_coord, crosshair_coord):
     #This function will get the player rotation from the aim position.
-    #First we subtract the player coords from the crosshair coords, to simulate a 0,0 axis
+    #First we subtract the player coords from the crosshair coords, to simulate a 0,0 axis:
+    print crosshair_coord
+    print player_coord
+    relative_coords = map(operator.sub,player_coord, crosshair_coord)
+    #Then we calculate the angle from the new coord set:
+    if relative_coords[1] == 0:
+        angle = 0
+    else:
+        angle = math.degrees(math.atan(relative_coords[0]/relative_coords[1]))
+    return angle
 
 def main():
     pygame.init()
@@ -51,12 +60,13 @@ def main():
         keystate = pygame.key.get_pressed()
 
         h_direction += keystate[K_RIGHT] - keystate[K_LEFT]
-        v_direction += keystate[K_UP] - keystate[K_DOWN]
+        v_direction += keystate[K_UP] + keystate[K_DOWN]
 
-        if rotation >= 360 or rotation <= -360:
-            rotation = 0
-        else:
-            rotation += keystate[K_q] - keystate[K_e]
+        #if rotation >= 360 or rotation <= -360:
+            #rotation = 0
+        #else:
+            #rotation += keystate[K_q] - keystate[K_e]
+        rotation = coord_to_angle((h_direction,v_direction), pygame.mouse.get_pos())
 
         player1.move(h_direction,v_direction)
         player1.rotate(rotation)
@@ -80,13 +90,12 @@ class Crosshair(pygame.sprite.Sprite):
         return self.rect
 
 class Player(pygame.sprite.Sprite):
-    speed = 3
+    speed = 1
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image("images/Player.png",-1)
+        self.image, self.rect = load_image("images/Player_Head.png",-1)
     def move(self,h_direction,v_direction):
-        self.rect.move_ip(h_direction*self.speed,0)
-        self.rect.move_ip(0, -v_direction*self.speed)
+        self.rect.move_ip(h_direction*self.speed, v_direction*self.speed)
     def rotate(self, angle):
         self.image = pygame.transform.rotate(self.image, angle)
 
