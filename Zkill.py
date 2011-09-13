@@ -27,16 +27,14 @@ def coord_to_angle(player_coord, crosshair_coord):
     #This function will get the player rotation from the aim position.
     #First we subtract the player coords from the crosshair coords, to simulate a 0,0 axis:
     #TODO: clean up this mess!
-    player_coord = list(player_coord)
     player_coord[1] = -player_coord[1]
     relative_coords = map(operator.sub,crosshair_coord, player_coord)
-    relative_coords = list(relative_coords)
     relative_coords[1] = -relative_coords[1]
     #Then we calculate the angle from the new coord set:
     if relative_coords[1] == 0 and relative_coords[0] > 0:
-        angle = 90
-    elif relative_coords[1] == 0 and relative_coords[0] < 0:
         angle = -90
+    elif relative_coords[1] == 0 and relative_coords[0] < 0:
+        angle = 90
     else:
         if relative_coords[1] > 0:
             angle = -math.degrees(math.atan(relative_coords[0]/relative_coords[1]))
@@ -53,8 +51,8 @@ def main():
     background = pygame.transform.scale(background,size)
     screen.blit(background, (0,0))
     clock = pygame.time.Clock()
-    h_direction = 133
-    v_direction = -100
+    h_direction = 400
+    v_direction = -305
     rotation = 0
 
     while True:
@@ -71,7 +69,7 @@ def main():
         h_direction += keystate[K_RIGHT] - keystate[K_LEFT]
         v_direction += keystate[K_UP] - keystate[K_DOWN]
 
-        rotation = coord_to_angle((h_direction,v_direction), pygame.mouse.get_pos())
+        rotation = coord_to_angle([h_direction,v_direction], pygame.mouse.get_pos())
 
         player1.move(h_direction,v_direction)
         player1.rotate(rotation)
