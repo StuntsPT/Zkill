@@ -1,5 +1,6 @@
 #!/usr/bin/python2
 
+from __future__ import division
 import pygame, sys, os, math, operator
 from pygame.locals import *
 from pygame.compat import geterror
@@ -26,16 +27,25 @@ def load_image(name, colorkey=None):
 def coord_to_angle(player_coord, crosshair_coord):
     #This function will get the player rotation from the aim position.
     #First we subtract the player coords from the crosshair coords, to simulate a 0,0 axis:
+    player_coord = list(player_coord)
+    player_coord[1] = -player_coord[1]
     print crosshair_coord
     print player_coord
-    relative_coords = map(operator.sub,player_coord, crosshair_coord)
+    relative_coords = map(operator.sub,crosshair_coord, player_coord)
+    relative_coords = list(relative_coords)
+    relative_coords[1] = -relative_coords[1]
+    print relative_coords
     #Then we calculate the angle from the new coord set:
     if relative_coords[1] == 0 and relative_coords[0] > 0:
-        angle = 0
+        angle = 90
     elif relative_coords[1] == 0 and relative_coords[0] < 0:
-        angle = 180
+        angle = -90
     else:
-        angle = math.degrees(math.atan(relative_coords[0]/relative_coords[1]))
+        if relative_coords[1] > 0:
+            angle = -math.degrees(math.atan(relative_coords[0]/relative_coords[1]))
+        else:
+            angle = -math.degrees(math.atan(relative_coords[0]/relative_coords[1])) -180
+
     print angle #TODO: The angle is not right!!!
     return angle
 
@@ -63,7 +73,7 @@ def main():
         keystate = pygame.key.get_pressed()
 
         h_direction += keystate[K_RIGHT] - keystate[K_LEFT]
-        v_direction += keystate[K_UP] + keystate[K_DOWN]
+        v_direction += keystate[K_UP] - keystate[K_DOWN]
 
         #if rotation >= 360 or rotation <= -360:
             #rotation = 0
@@ -98,7 +108,7 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image("images/Player_Head.png",-1)
     def move(self,h_direction,v_direction):
-        self.rect.move_ip(h_direction*self.speed, v_direction*self.speed)
+        self.rect.move_ip(h_direction*self.speed, -v_direction*self.speed)
     def rotate(self, angle):
         self.image = pygame.transform.rotate(self.image, angle)
 
