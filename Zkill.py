@@ -7,7 +7,6 @@ from pygame.compat import geterror
 
 size = (800, 600)
 game_dir = "./"
-#player_speed = [200,200]
 screen = pygame.display.set_mode(size)
 
 def load_image(name, colorkey=None):
@@ -27,14 +26,12 @@ def load_image(name, colorkey=None):
 def coord_to_angle(player_coord, crosshair_coord):
     #This function will get the player rotation from the aim position.
     #First we subtract the player coords from the crosshair coords, to simulate a 0,0 axis:
+    #TODO: clean up this mess!
     player_coord = list(player_coord)
     player_coord[1] = -player_coord[1]
-    print crosshair_coord
-    print player_coord
     relative_coords = map(operator.sub,crosshair_coord, player_coord)
     relative_coords = list(relative_coords)
     relative_coords[1] = -relative_coords[1]
-    print relative_coords
     #Then we calculate the angle from the new coord set:
     if relative_coords[1] == 0 and relative_coords[0] > 0:
         angle = 90
@@ -46,7 +43,6 @@ def coord_to_angle(player_coord, crosshair_coord):
         else:
             angle = -math.degrees(math.atan(relative_coords[0]/relative_coords[1])) -180
 
-    print angle #TODO: The angle is not right!!!
     return angle
 
 def main():
@@ -75,10 +71,6 @@ def main():
         h_direction += keystate[K_RIGHT] - keystate[K_LEFT]
         v_direction += keystate[K_UP] - keystate[K_DOWN]
 
-        #if rotation >= 360 or rotation <= -360:
-            #rotation = 0
-        #else:
-            #rotation += keystate[K_q] - keystate[K_e]
         rotation = coord_to_angle((h_direction,v_direction), pygame.mouse.get_pos())
 
         player1.move(h_direction,v_direction)
