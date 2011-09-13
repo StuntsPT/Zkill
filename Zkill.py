@@ -30,10 +30,13 @@ def coord_to_angle(player_coord, crosshair_coord):
     print player_coord
     relative_coords = map(operator.sub,player_coord, crosshair_coord)
     #Then we calculate the angle from the new coord set:
-    if relative_coords[1] == 0:
+    if relative_coords[1] == 0 and relative_coords[0] > 0:
         angle = 0
+    elif relative_coords[1] == 0 and relative_coords[0] < 0:
+        angle = 180
     else:
         angle = math.degrees(math.atan(relative_coords[0]/relative_coords[1]))
+    print angle #TODO: The angle is not right!!!
     return angle
 
 def main():
