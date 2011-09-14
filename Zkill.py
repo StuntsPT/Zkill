@@ -68,13 +68,19 @@ def main():
         allsprites = pygame.sprite.RenderPlain(crosshair,player1)
         keystate = pygame.key.get_pressed()
 
-        h_position += (keystate[K_RIGHT] - keystate[K_LEFT]) * speed
-        v_position += (keystate[K_UP] - keystate[K_DOWN]) * speed
+        #h_position += (keystate[K_RIGHT] - keystate[K_LEFT]) * speed
+        #v_position += (keystate[K_UP] - keystate[K_DOWN]) * speed
 
         rotation = coord_to_angle([h_position,v_position], pygame.mouse.get_pos())
 
-        #h_position += math.tan(rotation) * keystate[K_RIGHT] - keystate[K_LEFT]
-        #v_position += math.tan(rotation) * keystate[K_UP] - keystate[K_DOWN]
+        h_position += math.cos(math.radians(rotation+90)) * (keystate[K_UP]) * speed
+        v_position += math.sin(math.radians(rotation+90)) * (keystate[K_UP]) * speed 
+        h_position += math.cos(math.radians(rotation+90)) * (keystate[K_DOWN]) * -speed
+        v_position += math.sin(math.radians(rotation+90)) * (keystate[K_DOWN]) * -speed 
+        h_position += math.cos(math.radians(rotation)) * (keystate[K_RIGHT]) * speed
+        v_position += math.sin(math.radians(rotation)) * (keystate[K_RIGHT]) * speed 
+        h_position += math.cos(math.radians(rotation+180)) * (keystate[K_LEFT]) * speed
+        v_position += math.sin(math.radians(rotation+180)) * (keystate[K_LEFT]) * speed 
 
         player1.move(h_position,v_position)
         player1.rotate(rotation)
