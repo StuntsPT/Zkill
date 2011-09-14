@@ -27,6 +27,7 @@ def coord_to_angle(player_coord, crosshair_coord):
     #This function will get the player rotation from the aim position.
     #First we subtract the player coords from the crosshair coords, to simulate a 0,0 axis:
     #TODO: clean up this mess!
+    #I guess for now this is here to stay...
     player_coord[1] = -player_coord[1]
     relative_coords = map(operator.sub,crosshair_coord, player_coord)
     relative_coords[1] = -relative_coords[1]
@@ -51,9 +52,10 @@ def main():
     background = pygame.transform.scale(background,size)
     screen.blit(background, (0,0))
     clock = pygame.time.Clock()
-    h_direction = 400
-    v_direction = -305
+    h_position = 400
+    v_position = -305
     rotation = 0
+    speed = 3
 
     while True:
         clock.tick(60)
@@ -66,12 +68,15 @@ def main():
         allsprites = pygame.sprite.RenderPlain(crosshair,player1)
         keystate = pygame.key.get_pressed()
 
-        h_direction += keystate[K_RIGHT] - keystate[K_LEFT]
-        v_direction += keystate[K_UP] - keystate[K_DOWN]
+        h_position += (keystate[K_RIGHT] - keystate[K_LEFT]) * speed
+        v_position += (keystate[K_UP] - keystate[K_DOWN]) * speed
 
-        rotation = coord_to_angle([h_direction,v_direction], pygame.mouse.get_pos())
+        rotation = coord_to_angle([h_position,v_position], pygame.mouse.get_pos())
 
-        player1.move(h_direction,v_direction)
+        #h_position += math.tan(rotation) * keystate[K_RIGHT] - keystate[K_LEFT]
+        #v_position += math.tan(rotation) * keystate[K_UP] - keystate[K_DOWN]
+
+        player1.move(h_position,v_position)
         player1.rotate(rotation)
 
         screen.blit(background, (0,0))
@@ -93,12 +98,11 @@ class Crosshair(pygame.sprite.Sprite):
         return self.rect
 
 class Player(pygame.sprite.Sprite):
-    speed = 1
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image("images/Player_Head.png",-1)
-    def move(self,h_direction,v_direction):
-        self.rect.move_ip(h_direction*self.speed, -v_direction*self.speed)
+    def move(self,h_position,v_position):
+        self.rect.move_ip(h_position, -v_position)
     def rotate(self, angle):
         self.image = pygame.transform.rotate(self.image, angle)
 
