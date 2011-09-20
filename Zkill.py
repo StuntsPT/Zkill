@@ -54,8 +54,8 @@ def main():
     clock = pygame.time.Clock()
     h_position = 400
     v_position = -305
-    z_h_position = 100
-    z_v_position = -100
+    z_h_position = h_position - 300
+    z_v_position = v_position + 200
     base_speed = 3
 
     while True:
@@ -94,7 +94,7 @@ def main():
         zombie_rotation = coord_to_angle([z_h_position,z_v_position], [h_position,-v_position])
 
         z_h_position += math.cos(math.radians(zombie_rotation+90)) * zombie_speed
-        z_v_position += math.sin(math.radians(zombie_rotation)) * zombie_speed
+        z_v_position += math.sin(math.radians(zombie_rotation+90)) * zombie_speed
         zombie.move(z_h_position,z_v_position)
         zombie.rotate(zombie_rotation)
 
