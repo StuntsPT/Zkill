@@ -67,6 +67,7 @@ def main():
         crosshair = Crosshair()
         player1 = Player()
         zombie = Zombie()
+        #shot = Handgun()
         allsprites = pygame.sprite.RenderPlain(crosshair,player1,zombie)
         keystate = pygame.key.get_pressed()
         
@@ -97,6 +98,11 @@ def main():
         z_v_position += math.sin(math.radians(zombie_rotation+90)) * zombie_speed
         zombie.move(z_h_position,z_v_position)
         zombie.rotate(zombie_rotation)
+
+        ##Define bullet movement
+        #bullet_speed = 10
+        #b_h_position += h_position + math.cos(math.radians(player_rotation+90)) * bullet_speed
+        #b_v_position += v_position + math.sin(math.radians(player_rotation+90)) * bullet_speed
 
         screen.blit(background, (0,0))
         # Draws everything (order matters)
@@ -137,5 +143,11 @@ class Zombie(pygame.sprite.Sprite):
     def rotate(self, angle):
         self.image = pygame.transform.rotate(self.image, angle)
 
-    
+class Handgun(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image, self.rect = load_image("image/HG_bullet.png",-1)
+    def move(self, h_position, v_position):
+        self.rect.move_ip(h_position, -v_position)
+
 main()
