@@ -23,13 +23,13 @@ def load_image(name, colorkey=None):
         image.set_colorkey(colorkey, RLEACCEL)
     return image, image.get_rect()
 
-def coord_to_angle(player_coord, crosshair_coord):
-    #This function will get the player rotation from the aim position.
+def coord_to_angle(source_coord, target_coord):
+    #This function will get the player player_rotation from the aim position.
     #First we subtract the player coords from the crosshair coords, to simulate a 0,0 axis:
     #TODO: clean up this mess!
     #I guess for now this is here to stay...
-    player_coord[1] = -player_coord[1]
-    relative_coords = map(operator.sub,crosshair_coord, player_coord)
+    source_coord[1] = -source_coord[1]
+    relative_coords = map(operator.sub,target_coord, source_coord)
     relative_coords[1] = -relative_coords[1]
     #Then we calculate the angle from the new coord set:
     if relative_coords[1] == 0 and relative_coords[0] > 0:
@@ -54,8 +54,9 @@ def main():
     clock = pygame.time.Clock()
     h_position = 400
     v_position = -305
-    rotation = 0
-    speed = 3
+    z_h_position = 100
+    z_v_position = -100
+    base_speed = 3
 
     while True:
         clock.tick(60)
@@ -65,25 +66,37 @@ def main():
         pygame.display.update()
         crosshair = Crosshair()
         player1 = Player()
-        allsprites = pygame.sprite.RenderPlain(crosshair,player1)
+        zombie = Zombie()
+        allsprites = pygame.sprite.RenderPlain(crosshair,player1,zombie)
         keystate = pygame.key.get_pressed()
+        
+        #Define PLayer movement
+        player_rotation = coord_to_angle([h_position,v_position], pygame.mouse.get_pos())
 
-        #h_position += (keystate[K_RIGHT] - keystate[K_LEFT]) * speed
-        #v_position += (keystate[K_UP] - keystate[K_DOWN]) * speed
+        speed = base_speed + 0
 
-        rotation = coord_to_angle([h_position,v_position], pygame.mouse.get_pos())
-
-        h_position += math.cos(math.radians(rotation+90)) * (keystate[K_UP]) * speed
-        v_position += math.sin(math.radians(rotation+90)) * (keystate[K_UP]) * speed 
-        h_position += math.cos(math.radians(rotation+90)) * (keystate[K_DOWN]) * -speed
-        v_position += math.sin(math.radians(rotation+90)) * (keystate[K_DOWN]) * -speed 
-        h_position += math.cos(math.radians(rotation)) * (keystate[K_RIGHT]) * speed
-        v_position += math.sin(math.radians(rotation)) * (keystate[K_RIGHT]) * speed 
-        h_position += math.cos(math.radians(rotation+180)) * (keystate[K_LEFT]) * speed
-        v_position += math.sin(math.radians(rotation+180)) * (keystate[K_LEFT]) * speed 
+        h_position += math.cos(math.radians(player_rotation+90)) * (keystate[K_UP]) * speed 
+        v_position += math.sin(math.radians(player_rotation+90)) * (keystate[K_UP]) * speed 
+        h_position += math.cos(math.radians(player_rotation+90)) * (keystate[K_DOWN]) * -speed 
+        v_position += math.sin(math.radians(player_rotation+90)) * (keystate[K_DOWN]) * -speed 
+        h_position += math.cos(math.radians(player_rotation)) * (keystate[K_RIGHT]) * speed 
+        v_position += math.sin(math.radians(player_rotation)) * (keystate[K_RIGHT]) * speed 
+        h_position += math.cos(math.radians(player_rotation+180)) * (keystate[K_LEFT]) * speed 
+        v_position += math.sin(math.radians(player_rotation+180)) * (keystate[K_LEFT]) * speed 
 
         player1.move(h_position,v_position)
-        player1.rotate(rotation)
+        player1.rotate(player_rotation)
+
+
+        #Define Zombie movement:
+
+        zombie_speed = 2
+        zombie_rotation = coord_to_angle([z_h_position,z_v_position], [h_position,-v_position])
+
+        z_h_position += math.cos(math.radians(zombie_rotation+90)) * zombie_speed
+        z_v_position += math.sin(math.radians(zombie_rotation)) * zombie_speed
+        zombie.move(z_h_position,z_v_position)
+        zombie.rotate(zombie_rotation)
 
         screen.blit(background, (0,0))
         # Draws everything (order matters)
@@ -111,5 +124,18 @@ class Player(pygame.sprite.Sprite):
         self.rect.move_ip(h_position, -v_position)
     def rotate(self, angle):
         self.image = pygame.transform.rotate(self.image, angle)
+#    def temp_boosts(self, extra_speed):
+#        self.extra_speed = extra_speed
+#        return extra_speed
 
+class Zombie(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image, self.rect = load_image("images/Zombie.png",-1)
+    def move(self, z_h_position, z_v_position):
+        self.rect.move_ip(z_h_position, -z_v_position)
+    def rotate(self, angle):
+        self.image = pygame.transform.rotate(self.image, angle)
+
+    
 main()
